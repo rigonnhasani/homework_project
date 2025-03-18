@@ -25,7 +25,7 @@ jobs:
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
 
-    # Always send an email notification, whether success or failure
+    
       - name: Send Email Notification
         if: always()
         uses: dawidd6/action-send-mail@v3
@@ -44,11 +44,6 @@ jobs:
             - Branch: ${{ github.ref }}
             - Commit: ${{ github.sha }}
 
-            **Action Required:**
-            - If the status is `success`, the latest Docker image has been pushed to GHCR successfully. 🎉
-            - If the status is `failure`, please check the GitHub Actions logs for errors.
-
-            Best,
-            CI/CD Bot 🤖
+          
           to: ${{ secrets.EMAIL_TO }}
           from: ${{ secrets.EMAIL_FROM }}
