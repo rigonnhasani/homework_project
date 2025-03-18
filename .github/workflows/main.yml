@@ -26,29 +26,29 @@ jobs:
           docker push $IMAGE_NAME
 
     # Always send an email notification, whether success or failure
-    - name: Send Email Notification
-      if: always()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 587
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "CI/CD Pipeline Status: ${{ job.status }}"
-        body: |
-          Hello,
+      - name: Send Email Notification
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "CI/CD Pipeline Status: ${{ job.status }}"
+          body: |
+            Hello,
           
-          The CI/CD pipeline has completed with the following status: **${{ job.status }}**.
+            The CI/CD pipeline has completed with the following status: **${{ job.status }}**.
 
-          - Repository: ${{ github.repository }}
-          - Branch: ${{ github.ref }}
-          - Commit: ${{ github.sha }}
+            - Repository: ${{ github.repository }}
+            - Branch: ${{ github.ref }}
+            - Commit: ${{ github.sha }}
 
-          **Action Required:**
-          - If the status is `success`, the latest Docker image has been pushed to GHCR successfully. 🎉
-          - If the status is `failure`, please check the GitHub Actions logs for errors.
+            **Action Required:**
+            - If the status is `success`, the latest Docker image has been pushed to GHCR successfully. 🎉
+            - If the status is `failure`, please check the GitHub Actions logs for errors.
 
-          Best,
-          CI/CD Bot 🤖
-        to: ${{ secrets.EMAIL_TO }}
-        from: ${{ secrets.EMAIL_FROM }}
+            Best,
+            CI/CD Bot 🤖
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_FROM }}
