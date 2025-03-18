@@ -15,22 +15,40 @@ jobs:
         uses: actions/checkout@v4
      
       - name: Log in to GHCR
-        run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u rigonnhasani --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
       - name: Build and push the image
+        id: docker_build
         env:
           IMAGE_NAME: ghcr.io/rigonnhasani/actions-runner-controller:latest
         run: |
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
-      - name: Send Email Notification
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "CI/CD Pipeline Status: GHCR Image Pushed Successfully!"
-          body: "The latest Docker image has been built and pushed to GHCR successfully."
-          to: rigonhasani07@gmail.com
-          from: rigonhasani48@gmail.com
+
+    # Always send an email notification, whether success or failure
+    - name: Send Email Notification
+      if: always()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: "CI/CD Pipeline Status: ${{ job.status }}"
+        body: |
+          Hello,
+          
+          The CI/CD pipeline has completed with the following status: **${{ job.status }}**.
+
+          - Repository: ${{ github.repository }}
+          - Branch: ${{ github.ref }}
+          - Commit: ${{ github.sha }}
+
+          **Action Required:**
+          - If the status is `success`, the latest Docker image has been pushed to GHCR successfully. 🎉
+          - If the status is `failure`, please check the GitHub Actions logs for errors.
+
+          Best,
+          CI/CD Bot 🤖
+        to: ${{ secrets.EMAIL_TO }}
+        from: ${{ secrets.EMAIL_FROM }}
