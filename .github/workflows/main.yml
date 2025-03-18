@@ -29,12 +29,12 @@ jobs:
       - name: Build and tag Docker image
         run: |
           docker build -t $IMAGE_TAG .
-          docker tag $IMAGE_TAG $IMAGE_NAME:latest  # ✅ Tag as latest
+          docker tag $IMAGE_TAG $IMAGE_NAME
 
       - name: Push Docker image to GHCR
         run: |
           docker push $IMAGE_TAG
-          docker push $IMAGE_NAME:latest  # ✅ Push latest tag
+          docker push $IMAGE_NAME
 
       - name: Send Email Notification
         if: always()
